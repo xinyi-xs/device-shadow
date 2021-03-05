@@ -139,7 +139,7 @@ int send(server_request *request, char *topic);
 @ param send_topic : publish topic 
 @ param recv_topic : subsrcibe topic 
 @ ret : errorcode
-error_code send_and_recv(char *send_topic, char *recv_topic);
+error_code send_and_recv(server_request *request, char *send_topic, char *recv_topic);
 
 @ brief Make error code to string 
 @ param error_code : error code 
