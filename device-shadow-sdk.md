@@ -19,7 +19,7 @@ struct attr_arr {
     void        *val;
 };
 
-enum {reported, desired} property;
+enum {reported, desired} state;
 enum {syn, asyn} way_of_io;
 enum {.............} error_code;
 
@@ -27,14 +27,7 @@ enum {.............} error_code;
 
 - private
 ```c
-struct property_desired {
-    int         timestamp;
-    attr_int    *attr_i;
-    attr_str    *attr_s;
-    void        *attr_a;
-};
-
-struct property_reported {
+struct property {
     int         timestamp;
     attr_int    *attr_i;
     attr_str    *attr_s;
@@ -42,19 +35,19 @@ struct property_reported {
 };
 
 struct server_response {
-    char                *method;
-    int                 version;
-    int                 timestamp;
-    property_reported   *reported;
-    property_desired    *desired;
+    char        *method;
+    int         version;
+    int         timestamp;
+    property    *reported;
+    property    *desired;
 };
 
 struct server_request {
-    char                *method;
-    int                 version;
-    int                 timestamp;
-    property_reported   *reported;
-    property_desired    *desired;
+    char       *method;
+    int        version;
+    int        timestamp;
+    property   *reported;
+    property   *desired;
 
 };
 ```
@@ -86,19 +79,19 @@ char *get_param_method(server_response *response);
 @ param response : server response
 @ param p : desired or reported
 @ ret : attribute int array
-attr_int **get_param_int_arr(server_response *response, property p);
+attr_int **get_param_int_arr(server_response *response, state s);
 
 @ brief Get all string type data
 @ param response : server response
 @ param p : desired or reported
 @ ret : attribute string array
-attr_str *get_param_str_arr(server_response *responsem, property p);
+attr_str *get_param_str_arr(server_response *responsem, state s);
 
 @ brief Get all array type data
 @ param response : server response
 @ param p : desired or reported
 @ ret : attribute array array
-attr_arr *get_param_arr(server_response *response, property p);
+attr_arr *get_param_arr(server_response *response, state s);
 
 
 @ brief Builder a server request structure
@@ -117,7 +110,7 @@ int add_param_method(char *method);
 @ param val :value
 @ param p : desired or reported
 @ ret : 
-int add_param_int(server_request *request, char *key, int val, property p);
+int add_param_int(server_request *request, char *key, int val, state s);
 
 @ brief Add string type to server request
 @ param response : server request
@@ -125,7 +118,7 @@ int add_param_int(server_request *request, char *key, int val, property p);
 @ param val :value
 @ param p : desired or reported
 @ ret : 
-int add_param_str(server_request *request, char *key, char *str, property p);
+int add_param_str(server_request *request, char *key, char *str, state s);
 
 @ brief Add array type to server request
 @ param response : server request
@@ -133,7 +126,7 @@ int add_param_str(server_request *request, char *key, char *str, property p);
 @ param val :value
 @ param p : desired or reported
 @ ret : 
-int add_param_arr(server_request *request, char *key, void *arr, property p);
+int add_param_arr(server_request *request, char *key, void *arr, state s);
 
 @ brief Send request infomation to topic
 @ param request: request infomation
