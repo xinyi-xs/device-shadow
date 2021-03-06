@@ -11,7 +11,7 @@
 enum {INT, STR, ARR} TAG;
 
 struct attr {
-    TAG tag;
+    TAG         tag;
     char        key;
     union {
         int     val_int;
@@ -21,7 +21,6 @@ struct attr {
 };
 
 enum {reported, desired} state;
-enum {syn, asyn} way_of_io;
 
 ```
 
@@ -186,7 +185,7 @@ int add_param_int(server_request *request, char *key, int val, state s);
 @ param val :value
 @ param s : desired or reported
 @ ret : 
-int add_param_str(server_request *request, char *key, char *str, state s);
+int add_param_str(server_request *request, char *key, char *val, state s);
 
 @ brief Add array type to server request
 @ param response : server request
@@ -194,7 +193,7 @@ int add_param_str(server_request *request, char *key, char *str, state s);
 @ param val :value
 @ param s : desired or reported
 @ ret : 
-int add_param_arr(server_request *request, char *key, void *arr, state s);
+int add_param_arr(server_request *request, char *key, void *val, state s);
 
 @ brief Make error code to string 
 @ param error_code : error code 
