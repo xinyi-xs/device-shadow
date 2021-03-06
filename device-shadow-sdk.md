@@ -1,5 +1,10 @@
 # shadow-device-sdk
 
+
+## TODO
+- 认证机制
+- 重连机制
+
 ## Data structure
 
 - public
@@ -19,9 +24,14 @@ struct attr_arr {
     void        *val;
 };
 
+struct func_list {
+    func_call *call;
+}
+
 enum {reported, desired} state;
 enum {syn, asyn} way_of_io;
 enum {.............} error_code;
+enum {.............} func_enum;
 
 ```
 
@@ -48,13 +58,72 @@ struct server_request {
     int        timestamp;
     property   *reported;
     property   *desired;
+};
 
+struct emqx {
+    char    *id;
+    char    *dev;
+    // other
 };
 ```
 ## API 
 
 - public:
 ```c
+// TODO
+// emqx *emqx_regester(dev_info *info);
+
+@ brief Create a new emqx client instance.  
+@ param id : client id, if it is NULL, random id will be generated.
+@ ret : emqx client instance.
+emqx *emqx_new(char *id);
+
+@ brief Use to free memory associated with a emqx client instance.  
+@ param emq : emqx client instance.
+@ ret : 
+void emqx_destory(emqx *emq);
+
+@ brief Connect to an mqtt broker.  
+@ param emq : an emqx client instance. 
+@ param host : hostname or ip address of the broker to connect to.
+@ param port : network port to connect to.  Usually 1883.
+@ ret : error code.
+error_code emqx_connect(emqx *emq, char *host, int port);
+
+@ brief Reconnect to a broker.  
+@ param emq : an emqx client instance. 
+@ ret : error_code.
+error_code emqx_reconnect(emqx * emq);
+
+@ brief Disconnect from a broker.  
+@ param emq : an emqx client instance. 
+@ ret : error_code.
+error_code emqx_disconnect(emqx *emq);
+
+@ brief Update information to shadow.  
+@ param emq : an emqx client instance.
+@ ret : server response.
+server_response *emqx_get(emqx);
+
+@ brief Update information to shadow.  
+@ param emq : an emqx client instance.
+@ param request : server request.
+@ ret : error code.
+error_code emqx_update(emqx *emq, server_request *request);
+
+@ brief Receive and process data from shadow.  
+@ param emq : an emqx client instance.
+@ param obj : function list.
+@ ret : error code.
+error_code emqx_control(emqx *emq, func_list *obj);
+
+@ brief Delete shadow data.  
+@ param emq : an emqx client instance.
+@ param request : server request.
+@ ret : error code.
+error_code emqx_delete(emqx *emq, server_request *request);
+
+
 // TODO 
 int register(device_info *info);
 
