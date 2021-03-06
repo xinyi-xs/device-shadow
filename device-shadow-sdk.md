@@ -1,9 +1,8 @@
 # shadow-device-sdk
 
-
 ## TODO
-- 认证机制
-- 重连机制
+- 认证机制?
+- 是否需要will/ retain 扩展？
 
 ## Data structure
 
@@ -24,19 +23,15 @@ struct attr_arr {
     void        *val;
 };
 
-struct func_list {
-    func_call *call;
-}
-
 enum {reported, desired} state;
 enum {syn, asyn} way_of_io;
-enum {.............} error_code;
-enum {.............} func_enum;
 
 ```
 
 - private
 ```c
+enum {.............} error_code;
+
 struct property {
     int         timestamp;
     attr_int    *attr_i;
@@ -82,6 +77,7 @@ emqx *emqx_new(char *id);
 @ param emq : emqx client instance.
 @ ret : 
 void emqx_destory(emqx *emq);
+==================================================
 
 @ brief Connect to an mqtt broker.  
 @ param emq : an emqx client instance. 
@@ -99,45 +95,59 @@ error_code emqx_reconnect(emqx * emq);
 @ param emq : an emqx client instance. 
 @ ret : error_code.
 error_code emqx_disconnect(emqx *emq);
+==================================================
+
+@ brief Set control callback.  
+@ param emq : an emqx client instance.
+@ param func : a callback function for receive data.
+@ ret : error code.
+error_code emqx_set_control_callback(emqx *emq, control_callback func);
+
+@ brief Set get callback.  
+@ param emq : an emqx client instance.
+@ param func : a callback function for receive data.
+@ ret : error code.
+error_code emqx_set_get_callback(emqx *emq, get_callback func);
+
+@ brief Set update callback.  
+@ param emq : an emqx client instance.
+@ param func : a callback function for update data.
+@ ret : error code.
+error_code emqx_set_update_callback(emqx *emq, update_callback func);
+
+@ brief Set delete callback.  
+@ param emq : an emqx client instance.
+@ param func : a callback function for dalete data.
+@ ret : error code.
+error_code emqx_set_delete_callback(emqx *emq, delete_callback func);
+==================================================
 
 @ brief Update information to shadow.  
 @ param emq : an emqx client instance.
 @ ret : server response.
-server_response *emqx_get(emqx);
+server_response *emqx_syn_get(emqx);
+error_code emqx_asyn_get(emqx *emq);
 
 @ brief Update information to shadow.  
 @ param emq : an emqx client instance.
 @ param request : server request.
 @ ret : error code.
-error_code emqx_update(emqx *emq, server_request *request);
-
-@ brief Receive and process data from shadow.  
-@ param emq : an emqx client instance.
-@ param obj : function list.
-@ ret : error code.
-error_code emqx_control(emqx *emq, func_list *obj);
+error_code emqx_syn_update(emqx *emq, server_request *request);
+error_code emqx_asyn_update(emqx *emq, server_request *resquest);
 
 @ brief Delete shadow data.  
 @ param emq : an emqx client instance.
 @ param request : server request.
 @ ret : error code.
-error_code emqx_delete(emqx *emq, server_request *request);
+error_code emqx_syn_delete(emqx *emq, server_request *request);
+error_code emqx_asyn_delete(emqx *emq, server_request *request);
 
-
-// TODO 
-int register(device_info *info);
-
-@ brief Receive topic payload and parse to struct  
-@ param topic : subscibe topic 
-@ param way_of_io : syn or asyn
-@ ret : struct server response
-server_response *recv(char *topic, way_of_io io);
-
-@ brief Receive topic payload and return
-@ param topic : subscibe topic 
-@ param way_of_io : syn or asyn
-@ ret : raw payload
-char *recv_raw(char *topic, way_of_io io);
+@ brief Receive and process data from shadow.  
+@ param emq : an emqx client instance.
+@ param obj : function list.
+@ ret : error code.
+error_code emqx_asyn_control(emqx *emq);
+==================================================
 
 @ brief Get method from server response
 @ param response : server response
@@ -161,7 +171,6 @@ attr_str *get_param_str_arr(server_response *responsem, state s);
 @ param p : desired or reported
 @ ret : attribute array array
 attr_arr *get_param_arr(server_response *response, state s);
-
 
 @ brief Builder a server request structure
 @ param request : request
@@ -197,6 +206,28 @@ int add_param_str(server_request *request, char *key, char *str, state s);
 @ ret : 
 int add_param_arr(server_request *request, char *key, void *arr, state s);
 
+@ brief Make error code to string 
+@ param error_code : error code 
+@ ret : error information
+char *error_code_to_str(error_code error);
+==================================================
+
+```
+
+- private:
+```c
+@ brief Receive topic payload and parse to struct  
+@ param topic : subscibe topic 
+@ param way_of_io : syn or asyn
+@ ret : struct server response
+server_response *recv(char *topic, way_of_io io);
+
+@ brief Receive topic payload and return
+@ param topic : subscibe topic 
+@ param way_of_io : syn or asyn
+@ ret : raw payload
+char *recv_raw(char *topic, way_of_io io);
+
 @ brief Send request infomation to topic
 @ param request: request infomation
 @ param topic : publish topic 
@@ -210,14 +241,6 @@ int send(server_request *request, char *topic);
 @ ret : errorcode
 error_code send_and_recv(server_request *request, char *send_topic, char *recv_topic);
 
-@ brief Make error code to string 
-@ param error_code : error code 
-@ ret : error information
-char *error_code_to_str(error_code error);
-
-```
-- private:
-```c
 server_response *json_parser(json);
 json *json_builder(server_request *request);
 ```
