@@ -20,6 +20,21 @@ struct attr {
     };
 };
 
+// struct attr_int {
+//     char        *key
+//     int         val;
+// };
+// 
+// struct attr_str {
+//     char        *key
+//     char        *val;
+// };
+// 
+// struct attr_arr {
+//     char        *key;
+//     void        *val;
+// };
+
 enum {reported, desired} state;
 enum {syn, asyn} way_of_io;
 
@@ -162,10 +177,44 @@ void *get_param_attr(server_response *response, state s, TAG *type);
 @ ret : attribute int array
 void **get_all_param_attr(server_response *response, state s, TAG *type[]);
 
+// @ brief Get all int type data
+// @ param response : server response
+// @ param p : desired or reported
+// @ ret : attribute int array
+// attr_int **get_param_int_arr(server_response *response, state s);
+// 
+// @ brief Get all string type data
+// @ param response : server response
+// @ param p : desired or reported
+// @ ret : attribute string array
+// attr_str *get_param_str_arr(server_response *response, state s);
+// 
+// @ brief Get all array type data
+// @ param response : server response
+// @ param p : desired or reported
+// @ ret : attribute array array
+// attr_arr *get_param_arr(server_response *response, state s);
+
 @ brief Builder a server request structure
 @ param request : request
 @ ret : 
 server_re *request = builder(server_request *request);
+
+
+// @ brief Add type and structure with key && value to request.
+// @ param request : server request.
+// @ param s : desired or reported.
+// @ param type : object type we add.
+// @ ret : 
+// int add_all_param_attr(server_request *request, state s, char *key, int val, TAG type);
+// 
+// @ brief Add all type and structure with key && value to request.
+// @ param request : server request.
+// @ param key : key
+// @ param val :value
+// @ param type : object type we get.
+// @ ret : 
+// int add_all_param_attr(server_request *request, state s, char *key, int val, TAG type[]);
 
 @ brief Add method to server request
 @ param method : method
